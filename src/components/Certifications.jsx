@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton'
 
 export function Certifications() {
   const [selectedCert, setSelectedCert] = useState(null)
@@ -31,7 +32,7 @@ export function Certifications() {
             /CERTIFICATIONS
           </h2>
           <p className="text-xs sm:text-sm text-neutral-500 max-w-md mx-auto mt-2">
-            TESDA Online Program certifications in Systems, Networks, Design & Business.
+            Technical qualifications from Philippine Statistics Authority (PSA), Cisco Networking Academy, and TESDA.
           </p>
         </div>
 
@@ -44,21 +45,21 @@ export function Certifications() {
               className="group p-5 rounded-3xl border border-neutral-200/80 bg-neutral-50/50 hover:bg-white hover:border-neutral-300 hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col justify-between"
             >
               <div>
-                {/* Certificate Preview Frame */}
-                <div className="relative aspect-[16/11] rounded-2xl overflow-hidden bg-neutral-900 mb-4 border border-neutral-200/60">
-                  <img
-                    src={cert.image}
-                    alt={cert.name}
-                    className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                {/* Certificate Preview Frame with Skeleton Preloader */}
+                <ImageWithSkeleton
+                  src={cert.image}
+                  alt={cert.name}
+                  aspectRatio="aspect-[16/11]"
+                  className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                  containerClassName="rounded-2xl mb-4 border border-neutral-200/60 bg-neutral-900"
+                >
+                  <div className="absolute inset-0 z-20 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                     <span className="px-3 py-1.5 rounded-full bg-white text-neutral-900 text-xs font-semibold shadow-md inline-flex items-center gap-1.5">
                       <ExternalLink className="h-3.5 w-3.5" />
                       View Certificate
                     </span>
                   </div>
-                </div>
+                </ImageWithSkeleton>
 
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
@@ -88,13 +89,13 @@ export function Certifications() {
               <span className="text-xs font-mono text-emerald-600 font-semibold">{selectedCert.issuer}</span>
               <DialogTitle className="text-xl font-bold">{selectedCert.name}</DialogTitle>
             </DialogHeader>
-            <div className="rounded-2xl overflow-hidden border border-neutral-200 bg-neutral-950 flex items-center justify-center">
-              <img
-                src={selectedCert.image}
-                alt={selectedCert.name}
-                className="w-full h-auto max-h-[70vh] object-contain"
-              />
-            </div>
+            <ImageWithSkeleton
+              src={selectedCert.image}
+              alt={selectedCert.name}
+              aspectRatio="aspect-[4/3] sm:aspect-[16/12]"
+              className="object-contain"
+              containerClassName="rounded-2xl border border-neutral-200 bg-neutral-950 flex items-center justify-center"
+            />
           </DialogContent>
         </Dialog>
       )}

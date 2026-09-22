@@ -9,6 +9,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, ArrowRight, ExternalLink, X } from 'lucide-react'
+import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton'
 
 export function ProjectModal({ project, isOpen, onClose }) {
   if (!project) return null
@@ -42,31 +43,34 @@ export function ProjectModal({ project, isOpen, onClose }) {
           </DialogDescription>
         </DialogHeader>
 
-        {/* Image Showcase & Carousel */}
-        <div className="relative rounded-2xl overflow-hidden bg-neutral-950 border border-neutral-200 mt-2 aspect-[16/10] flex items-center justify-center">
-          <img
+        {/* Image Showcase & Carousel with Skeleton Preloader */}
+        <div className="relative rounded-2xl overflow-hidden bg-neutral-950 border border-neutral-200 mt-2">
+          <ImageWithSkeleton
+            key={images[currentImageIndex]}
             src={images[currentImageIndex]}
             alt={`${project.title} screenshot ${currentImageIndex + 1}`}
-            className="w-full h-full object-contain"
+            aspectRatio="aspect-[16/10]"
+            className="object-contain"
+            containerClassName="bg-neutral-950 flex items-center justify-center"
           />
 
           {images.length > 1 && (
             <>
               <button
                 onClick={handlePrev}
-                className="absolute left-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur-sm transition-all cursor-pointer"
+                className="absolute z-20 left-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur-sm transition-all cursor-pointer"
                 title="Previous Image"
               >
                 <ArrowLeft className="h-4 w-4" />
               </button>
               <button
                 onClick={handleNext}
-                className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur-sm transition-all cursor-pointer"
+                className="absolute z-20 right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur-sm transition-all cursor-pointer"
                 title="Next Image"
               >
                 <ArrowRight className="h-4 w-4" />
               </button>
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-[11px] font-mono text-white/90">
+              <div className="absolute z-20 bottom-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-[11px] font-mono text-white/90">
                 {currentImageIndex + 1} / {images.length}
               </div>
             </>

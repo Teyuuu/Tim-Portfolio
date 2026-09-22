@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card'
 import { portfolioData } from '@/data/portfolioData'
 import { ArrowUpRight, Images } from 'lucide-react'
 import { ProjectModal } from '@/components/ProjectModal'
+import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton'
 
 export function SelectedWork({ onOpenContact }) {
   const [activeCategory, setActiveCategory] = useState('All')
@@ -70,15 +71,14 @@ export function SelectedWork({ onOpenContact }) {
               onClick={() => setSelectedProject(project)}
               className="group overflow-hidden border border-neutral-200/80 rounded-3xl bg-neutral-50/50 hover:bg-white hover:border-neutral-300 hover:shadow-xl transition-all duration-500 flex flex-col cursor-pointer"
             >
-              {/* Project Image Frame with Badge and Hover Arrow */}
-              <div className="relative aspect-[16/10] overflow-hidden bg-neutral-900">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
-                  loading="lazy"
-                />
-
+              {/* Project Image Frame with Skeleton Preloader, Badge and Hover Arrow */}
+              <ImageWithSkeleton
+                src={project.image}
+                alt={project.title}
+                aspectRatio="aspect-[16/10]"
+                className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+                containerClassName="bg-neutral-900"
+              >
                 {/* Badge: "REAL PROJECT" in top left corner (matching screenshot 2) */}
                 <div className="absolute top-4 left-4 z-20">
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-black/60 text-white backdrop-blur-md border border-white/10 shadow-sm">
@@ -97,12 +97,12 @@ export function SelectedWork({ onOpenContact }) {
                 )}
 
                 {/* Circular hover action button in center (matching screenshot 2) */}
-                <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                <div className="absolute inset-0 z-20 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                   <div className="h-14 w-14 rounded-full bg-white text-neutral-900 flex items-center justify-center shadow-lg transform scale-75 group-hover:scale-100 transition-all duration-300">
                     <ArrowUpRight className="h-6 w-6 stroke-[2.5]" />
                   </div>
                 </div>
-              </div>
+              </ImageWithSkeleton>
 
               {/* Card Meta Content */}
               <div className="p-6 sm:p-7 flex flex-col flex-1 justify-between gap-4">
