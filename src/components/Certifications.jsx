@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { portfolioData } from '@/data/portfolioData'
-import { Award, CheckCircle2, ExternalLink } from 'lucide-react'
+import { Award, CheckCircle2, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -11,11 +12,27 @@ import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton'
 
 export function Certifications() {
   const [selectedCert, setSelectedCert] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 6
+
+  const totalCerts = portfolioData.certificates.length
+  const totalPages = Math.ceil(totalCerts / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const paginatedCerts = portfolioData.certificates.slice(startIndex, startIndex + itemsPerPage)
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
+    const element = document.getElementById('certs')
+    if (element) {
+      const topOffset = element.getBoundingClientRect().top + window.scrollY - 80
+      window.scrollTo({ top: topOffset, behavior: 'smooth' })
+    }
+  }
 
   return (
     <section id="certs" className="relative w-full py-20 px-4 sm:px-8 bg-white border-t border-neutral-100 overflow-hidden">
       
-      {/* Background Watermark: "CERTIFIED" */}
+      {/* Background Watermark: "CREDENTIALS" */}
       <div className="section-watermark">
         CREDENTIALS
       </div>
@@ -36,9 +53,9 @@ export function Certifications() {
           </p>
         </div>
 
-        {/* Certifications Grid */}
+        {/* Certifications Grid (6 items per page) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {portfolioData.certificates.map((cert) => (
+          {paginatedCerts.map((cert) => (
             <div
               key={cert.name}
               onClick={() => setSelectedCert(cert)}
@@ -78,6 +95,55 @@ export function Certifications() {
             </div>
           ))}
         </div>
+
+        {/* Pagination Controls (6 certifications per page) */}
+        {totalPages > 1 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-12 pt-8 border-t border-neutral-100">
+            <p className="text-xs text-neutral-500 font-medium">
+              Showing <span className="font-semibold text-neutral-900">{startIndex + 1}</span>–
+              <span className="font-semibold text-neutral-900">{Math.min(startIndex + itemsPerPage, totalCerts)}</span> of{' '}
+              <span className="font-semibold text-neutral-900">{totalCerts}</span> certifications
+            </p>
+
+            <div className="flex items-center gap-1.5">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage === 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+                className="rounded-full h-9 px-3.5 border-neutral-200 text-xs font-semibold disabled:opacity-30 cursor-pointer hover:bg-neutral-900 hover:text-white transition-colors"
+              >
+                <ChevronLeft className="h-3.5 w-3.5 mr-1" />
+                Prev
+              </Button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`h-9 w-9 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                    currentPage === page
+                      ? 'bg-neutral-900 text-white shadow-sm'
+                      : 'border border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-100'
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage === totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+                className="rounded-full h-9 px-3.5 border-neutral-200 text-xs font-semibold disabled:opacity-30 cursor-pointer hover:bg-neutral-900 hover:text-white transition-colors"
+              >
+                Next
+                <ChevronRight className="h-3.5 w-3.5 ml-1" />
+              </Button>
+            </div>
+          </div>
+        )}
 
       </div>
 

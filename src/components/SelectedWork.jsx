@@ -3,13 +3,15 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { portfolioData } from '@/data/portfolioData'
-import { ArrowUpRight, Images } from 'lucide-react'
+import { ArrowUpRight, Images, ChevronLeft, ChevronRight } from 'lucide-react'
 import { ProjectModal } from '@/components/ProjectModal'
 import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton'
 
 export function SelectedWork({ onOpenContact }) {
   const [activeCategory, setActiveCategory] = useState('All')
   const [selectedProject, setSelectedProject] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 4
 
   const categories = ['All', 'Real Project', 'Exploration']
 
@@ -17,6 +19,24 @@ export function SelectedWork({ onOpenContact }) {
     activeCategory === 'All'
       ? portfolioData.projects
       : portfolioData.projects.filter((p) => p.category === activeCategory)
+
+  const totalPages = Math.ceil(filteredProjects.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const paginatedProjects = filteredProjects.slice(startIndex, startIndex + itemsPerPage)
+
+  const handleCategoryChange = (category) => {
+    setActiveCategory(category)
+    setCurrentPage(1)
+  }
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
+    const element = document.getElementById('work')
+    if (element) {
+      const topOffset = element.getBoundingClientRect().top + window.scrollY - 80
+      window.scrollTo({ top: topOffset, behavior: 'smooth' })
+    }
+  }
 
   return (
     <section id="work" className="relative w-full py-20 px-4 sm:px-8 bg-white border-t border-neutral-100">
@@ -41,7 +61,7 @@ export function SelectedWork({ onOpenContact }) {
             {categories.map((category) => (
               <button
                 key={category}
-                onClick={() => setActiveCategory(category)}
+                onClick={() => handleCategoryChange(category)}
                 className={`text-xs sm:text-sm font-semibold px-4 py-2 rounded-full transition-all duration-200 cursor-pointer ${
                   activeCategory === category
                     ? 'bg-neutral-900 text-white shadow-sm'
@@ -63,9 +83,9 @@ export function SelectedWork({ onOpenContact }) {
           </Button>
         </div>
 
-        {/* 2-Column Responsive Project Showcase Grid (matching screenshot 2) */}
+        {/* 2-Column Responsive Project Showcase Grid (4 items per page) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
-          {filteredProjects.map((project) => (
+          {paginatedProjects.map((project) => (
             <Card
               key={project.id}
               onClick={() => setSelectedProject(project)}
@@ -138,6 +158,55 @@ export function SelectedWork({ onOpenContact }) {
             </Card>
           ))}
         </div>
+
+        {/* Pagination Controls (4 projects per page) */}
+        {totalPages > 1 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-12 pt-8 border-t border-neutral-100">
+            <p className="text-xs text-neutral-500 font-medium">
+              Showing <span className="font-semibold text-neutral-900">{startIndex + 1}</span>–
+              <span className="font-semibold text-neutral-900">{Math.min(startIndex + itemsPerPage, filteredProjects.length)}</span> of{' '}
+              <span className="font-semibold text-neutral-900">{filteredProjects.length}</span> projects
+            </p>
+
+            <div className="flex items-center gap-1.5">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage === 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+                className="rounded-full h-9 px-3.5 border-neutral-200 text-xs font-semibold disabled:opacity-30 cursor-pointer hover:bg-neutral-900 hover:text-white transition-colors"
+              >
+                <ChevronLeft className="h-3.5 w-3.5 mr-1" />
+                Prev
+              </Button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`h-9 w-9 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                    currentPage === page
+                      ? 'bg-neutral-900 text-white shadow-sm'
+                      : 'border border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-100'
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage === totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+                className="rounded-full h-9 px-3.5 border-neutral-200 text-xs font-semibold disabled:opacity-30 cursor-pointer hover:bg-neutral-900 hover:text-white transition-colors"
+              >
+                Next
+                <ChevronRight className="h-3.5 w-3.5 ml-1" />
+              </Button>
+            </div>
+          </div>
+        )}
 
       </div>
 
